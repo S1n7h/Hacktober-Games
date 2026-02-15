@@ -14,7 +14,7 @@ screen = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption('Doggo Run')      
 
 # Load images
-doggo_image = pygame.image.load("doggo.jpg")
+doggo_image = pygame.image.load("doggo.jpg") 
 cone_image = pygame.image.load("cone.png")
 
 # Font for displaying score

@@ -19,9 +19,14 @@ lastkeypress = 0
 clocktickspeed = 20
 
 pygame.display.init()
+pygame.font.init()
+
 screen = pygame.display.set_mode((1023,600))
 pygame.display.set_caption("Snake Game")
 clock = pygame.time.Clock()
+
+# -------- FONT FOR SCORE --------
+font = pygame.font.SysFont("Arial", 40)
 
 apple = pygame.Surface((60, 60), pygame.SRCALPHA)
 snake = pygame.Surface((60, 60), pygame.SRCALPHA)
@@ -35,7 +40,23 @@ while True:
             pygame.quit()
             exit()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_DOWN:            
+                lastkeypress = 1            
+            elif event.key == pygame.K_UP:            
+                lastkeypress = 2
+            elif event.key == pygame.K_RIGHT:            
+                lastkeypress = 3
+            elif event.key == pygame.K_LEFT:            
+                lastkeypress = 4
+
     screen.fill((0,0,0))    
+
+    # -------- SCOREBOARD --------
+    pygame.draw.rect(screen, (40, 40, 40), (0, 0, 1023, 60))
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    score_rect = score_text.get_rect(center=(1023 // 2, 30))
+    screen.blit(score_text, score_rect)
 
     if(s_x < -30 or s_x > 970):
         pygame.quit()
@@ -46,7 +67,7 @@ while True:
         for i in range(score , 0 , -1):
             snake_position[i] = snake_position[i-1] 
 
-    #movement
+    # movement
     if (lastkeypress == 1):
         s_y += speed
     elif (lastkeypress == 2):
@@ -56,24 +77,7 @@ while True:
     elif (lastkeypress == 4):
         s_x -= speed
 
-    
-
-
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_DOWN:            
-            lastkeypress = 1            
-        elif event.key == pygame.K_UP:            
-            lastkeypress = 2
-        elif event.key == pygame.K_RIGHT:            
-            lastkeypress = 3
-        elif event.key == pygame.K_LEFT:            
-            lastkeypress = 4
-    
-    
-
-        
-
-    #if statement which updates the coordinates of the apple
+    # apple collision
     if ( a_x == s_x and a_y == s_y ):
         a_x = random.randrange(60,1006,15)
         a_y = random.randrange(60,511,15)
@@ -87,25 +91,23 @@ while True:
             snake_position.append((s_x - 15,s_y))
         elif(lastkeypress == 4):
             snake_position.append((s_x + 15,s_y))
-    
+
     screen.blit(apple,(a_x,a_y))
 
-    #snake body 
+    # snake body 
     if ( score == 0 ):
         screen.blit(snake,(s_x,s_y))
     else:
         screen.blit(snake,(snake_position[0]))
-        for i in range(  1 , score + 1 , 1 ):
+        for i in range(1 , score + 1):
             screen.blit(snake,(snake_position[i]))
 
     snake_position[0] = (s_x,s_y)
 
-
-    print(snake_position,a_x,a_y)
-
     pygame.display.update() 
     
+    # increase speed after score 10
     if (score > 10):
-        clocktickspeed + 5
-    #tells the while loop to not run this loop more than 60 times per second
+        clocktickspeed += 5
+
     clock.tick(clocktickspeed)
